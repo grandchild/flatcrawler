@@ -21,3 +21,19 @@ know (PR maybe) if there are any more one should add.
 ## Python
 
 Uses f-strings 🤩 and thus needs python 3.6 or higher.
+
+## systemd
+
+You can create a systemd service file from the script itself by calling it with
+the parameter `systemd`:
+
+```bash
+./crawler.py systemd > ~/.local/share/systemd/user/flatcrawler.service
+systemctl --user daemon-reload
+systemctl enable --now flatcrawler
+```
+
+Check that it's running with:
+```bash
+systemctl --user status flatcrawler
+```
