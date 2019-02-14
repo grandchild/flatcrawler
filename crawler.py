@@ -18,6 +18,7 @@ import sys
 import time
 from collections import defaultdict
 from urllib.parse import urlsplit, urlunparse
+from hashlib import sha1
 import requests
 import sendmail
 from config import sites, MailConfig
@@ -97,7 +98,8 @@ def check(site, retries=2, backoff=1):
         elif none_str and (none_str in result.text):
             print(LOG_NO_FLATS.format(name))
         elif success_str is None:
-            offers.add(url)
+            if check_and_update_known(url, result.text):
+                offers.add(url)
         elif success_str in result.text:
             debug_dump_site_html(name, result.text)
             matches = re.findall(expose_pattern, result.text)
@@ -123,8 +125,10 @@ def check(site, retries=2, backoff=1):
     return offers, err
 
 
-def check_and_update_known(url):
+def check_and_update_known(url, text=None):
     '''Keep track of individual flat urls that we've already seen.'''
+    if text is not None:
+        url += '|' + sha1(text.encode()).hexdigest()
     try:
         with open(KNOWN_FILE, 'r+') as known_file:
             if any([True for known in known_file if url in known]):
