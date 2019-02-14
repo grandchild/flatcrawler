@@ -119,7 +119,7 @@ def check(site, retries=2, backoff=1):
         if retries > 0:
             print(LOG_WARN.format(name, err, retries))
             time.sleep(backoff)
-            return check(name, result, retries-1, (backoff+2)*1.5)
+            return check(site, retries-1, (backoff+2)*1.5)
         else:
             print(LOG_ERR.format(name, err))
     return offers, err
