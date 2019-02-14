@@ -39,7 +39,7 @@ sites = [
         'url': f'https://www.gewobag.de/mieten-7.html?zimmer_von={rooms_min}&zimmer_bis={rooms_max}&wohnung=1&ortsteil=Prenzlauer_BergX1Prenzlauer_BergX1&start=0&do=AKTUALISIEREN',
         'none-str': 'Zur Zeit sind leider keine passenden Angebote verfügbar',
         'success-str': 'Seite 1 von',
-        'expose-url-pattern': r'href="(expose_Esplanade.+?html)',
+        'expose-url-pattern': r'href="(expose_.+?html)',
         'notes': 'nur prenzlberg',
     },
     {
