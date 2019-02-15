@@ -25,6 +25,22 @@ rent_max = 1000
 # Umland:                    40-67
 _degewo_districts='%2C+'.join(['28',])
 
+### Gewobag districts, comment out the ones you'd not like to search in.
+_gewobag_districts='X1'.join([
+    # 'Adlershof',
+    # 'Alt-Hohenschoenhausen',
+    'Alt-Treptow',
+    # 'Falkenberg',
+    # 'Falkenhagener_Feld',
+    # 'Fennpfuhl',
+    'Lichtenberg',
+    # 'Mariendorf',
+    'Prenzlauer_Berg',
+    'Schoeneberg',
+    # 'Staaken',
+])
+
+
 '''
 name: name of site (must be unique)
 url: website url where offers should appear
@@ -36,7 +52,7 @@ notes: general notes on the site (currently not used)
 sites = [
     {
         'name': 'Gewobag',
-        'url': f'https://www.gewobag.de/mieten-7.html?zimmer_von={rooms_min}&zimmer_bis={rooms_max}&wohnung=1&ortsteil=Prenzlauer_BergX1Prenzlauer_BergX1&start=0&do=AKTUALISIEREN',
+        'url': f'https://www.gewobag.de/mieten-7.html?zimmer_von={rooms_min}&zimmer_bis={rooms_max}&wohnung=1&ortsteil={_gewobag_districts}&start=0&do=AKTUALISIEREN',
         'none-str': 'Zur Zeit sind leider keine passenden Angebote verfügbar',
         'success-str': 'Seite 1 von',
         'expose-url-pattern': r'href="(expose_.+?html)',
