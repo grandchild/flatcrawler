@@ -24,16 +24,20 @@ Uses f-strings 🤩 and thus needs python 3.6 or higher.
 
 ## systemd
 
-You can create a systemd service file from the script itself by calling it with
-the parameter `systemd`:
+You can create systemd service and timer files from the script itself by calling
+it with the parameter `service` and `timer` respectively:
 
 ```bash
-./crawler.py systemd > ~/.local/share/systemd/user/flatcrawler.service
+./crawler.py service > ~/.local/share/systemd/user/flatcrawler.service
+./crawler.py timer > ~/.local/share/systemd/user/flatcrawler.timer
 systemctl --user daemon-reload
-systemctl enable --now flatcrawler
+systemctl enable --now flatcrawler.timer
 ```
 
-Check that it's running with:
+The timer defaults to a one hour interval (delayed randomly by up to 15min).
+
+Check that the service and timer are running with:
+
 ```bash
-systemctl --user status flatcrawler
+systemctl --user status flatcrawler flatcrawler.timer
 ```
