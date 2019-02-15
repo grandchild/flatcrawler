@@ -45,9 +45,11 @@ EMAIL_TEXT = 'Hey,\n{}\n{}\n'
 EMAIL_SITE_OFFERS_TEXT = '\nes gibt neue Wohnungen bei {}:\n{}\n'
 EMAIL_SITE_ERRORS_TEXT = '\nEs sind Fehler aufgetreten bei {}:\n{}\n'
 
-ERR_CONNECTION = 'Die Seite {} ({}) scheint nicht zu funktionieren. Konnte keine Angebote prüfen.'
+ERR_CONNECTION = 'Die Seite {} ({}) scheint nicht zu funktionieren. Konnte' \
+    + ' keine Angebote prüfen.'
 ERR_NOT_FOUND = 'Angebotsseite {} konnte nicht gefunden werden. Status war {}.'
-ERR_SUCCESS_NO_MATCHES = 'success-str bei {} gefunden, aber keine Matches. expose-url-pattern überprüfen.'
+ERR_SUCCESS_NO_MATCHES = 'success-str bei {} gefunden, aber keine Matches.' \
+    + ' expose-url-pattern überprüfen.'
 
 LOG_CRAWLING = 'crawling {}'
 LOG_NO_FLATS = '  no flats found at {}'
@@ -150,9 +152,11 @@ def send_mail(results):
     errors_strs = []
     for site, (offer_list, error) in results.items():
         if error:
-            errors_strs.append(EMAIL_SITE_ERRORS_TEXT.format(site, indent(error, '  ✖ ')))
+            errors_strs.append(EMAIL_SITE_ERRORS_TEXT.format(site,
+                indent(error, '  ✖ ')))
         else:
-            offers_strs.append(EMAIL_SITE_OFFERS_TEXT.format(site, indent(offer_list, '  ✔ ')))
+            offers_strs.append(EMAIL_SITE_OFFERS_TEXT.format(site,
+                indent(offer_list, '  ✔ ')))
     text = EMAIL_TEXT.format('\n'.join(offers_strs), '\n'.join(errors_strs))
     mail = sendmail.Mail(RECIPIENTS[0], EMAIL_SUBJECT, text, bcc=RECIPIENTS[1:])
     mail.send()
