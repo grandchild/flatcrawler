@@ -180,11 +180,11 @@ def debug_dump_site_html(name, html):
         print(html, file=test_log)
 
 
-def print_unit_file():
+def print_service_file():
     '''Print a systemd unit file to stdout'''
     service_file = f'''\
 [Unit]
-Description=Watch multiple websites for new flat exposes
+Description=Check multiple websites for new flat exposes
 After=network-online.target nss-lookup.target
 
 [Service]
@@ -192,19 +192,36 @@ Type=simple
 ExecStart=/usr/bin/python3 -u {os.path.realpath(__file__)}
 
 [Install]
-WantedBy=multi-user.target
-'''
+WantedBy=multi-user.target'''
     print(service_file)
+
+
+def print_timer_file():
+    timer_file = f'''\
+[Unit]
+Description=Check multiple websites for new flat exposes
+
+[Timer]
+OnActiveSec={CHECK_INTERVAL}s
+RandomizedDelaySec={CHECK_INTERVAL//4}s
+
+[Install]
+WantedBy=timers.target'''
+    print(timer_file)
 
 
 '''Check in a loop until SIGTERM.'''
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'systemd':
-        print_unit_file()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'service':
+            print_service_file()
+        elif sys.argv[1] == 'timer':
+            print_timer_file()
+        else:
+            print(f'Unknown command "{sys.argv[1]}"')
+            sys.exit(1)
         sys.exit(0)
     try:
-        while main() == 0:
-            time.sleep(CHECK_INTERVAL)
-        sys.exit(1)
+        sys.exit(main())
     except KeyboardInterrupt:
         sys.exit(0)
