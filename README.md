@@ -22,6 +22,11 @@ know (PR maybe) if there are any more one should add.
 
 Uses f-strings 🤩 and thus needs python 3.6 or higher.
 
+## Dependencies
+
+* [requests](http://docs.python-requests.org/en/master/user/install/#install)
+* [beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup)
+
 ## systemd
 
 You can create systemd service and timer files from the script itself by calling
