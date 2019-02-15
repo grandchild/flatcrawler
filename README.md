@@ -41,8 +41,8 @@ systemctl enable --now flatcrawler.timer
 
 The timer defaults to a one hour interval (delayed randomly by up to 15min).
 
-Check that the service and timer are running with:
+Check that the timer is running with:
 
 ```bash
-systemctl --user status flatcrawler flatcrawler.timer
+systemctl --user status flatcrawler.timer
 ```
