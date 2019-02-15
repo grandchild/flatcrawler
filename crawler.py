@@ -19,6 +19,7 @@ import time
 from collections import defaultdict
 from urllib.parse import urlsplit, urlunparse
 from hashlib import sha1
+from bs4 import BeautifulSoup
 import requests
 import sendmail
 from config import sites, MailConfig
@@ -128,7 +129,8 @@ def check(site, retries=2, backoff=1):
 def check_and_update_known(url, text=None):
     '''Keep track of individual flat urls that we've already seen.'''
     if text is not None:
-        url += '|' + sha1(text.encode()).hexdigest()
+        url += '|' + sha1(
+            BeautifulSoup(text, 'html.parser').get_text().encode()).hexdigest()
     try:
         with open(KNOWN_FILE, 'r+') as known_file:
             if any([True for known in known_file if url in known]):
