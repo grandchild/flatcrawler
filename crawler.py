@@ -70,7 +70,7 @@ def main():
         print(results)
     else:
         print(LOG_NO_NEW_RESULTS)
-    return 0
+    return 0 if all([e is None for _, (_, e) in results.items()]) else 1
 
 
 def check(site, retries=2, backoff=1):
