@@ -206,7 +206,7 @@ def print_timer_file():
 Description=Check multiple websites for new flat exposes
 
 [Timer]
-OnActiveSec={CHECK_INTERVAL}s
+OnUnitActiveSec={CHECK_INTERVAL}s
 RandomizedDelaySec={CHECK_INTERVAL//4}s
 
 [Install]
