@@ -2,7 +2,7 @@
 # CC0 - free software.
 # To the extent possible under law, all copyright and related or neighboring
 # rights to this work are waived.
-'''
+"""
 Watch a webserver continously to check if it and all pages it is supposed to
 serve are online. Send an email and exit when something fails.
 
@@ -11,7 +11,7 @@ this means it requires a manual restart once things are back to normal.
 
 See the bottom of this file for a fitting systemd service file, to be placed
 at /etc/systemd/system/notifywebsitedown.service.
-'''
+"""
 import re
 import os
 import sys
@@ -25,47 +25,46 @@ import sendmail
 from config import sites, MailConfig
 
 seconds = 1
-minutes = 60*seconds
-hours = 60*minutes
+minutes = 60 * seconds
+hours = 60 * minutes
 
 
 ### Basic settings
-RECIPIENTS = [
-    MailConfig.recipient,
-    *MailConfig.bcc_recipients
-]
-CHECK_INTERVAL = 1*hours
-URL_PRINT_LENGTH = 100 # print at maximimum n chars of the url in error messages
-KNOWN_FILE = 'known.txt'
+RECIPIENTS = [MailConfig.recipient, *MailConfig.bcc_recipients]
+CHECK_INTERVAL = 1 * hours
+URL_PRINT_LENGTH = 100  # print at maximimum n chars of the url in error messages
+KNOWN_FILE = "known.txt"
 
 ### Message strings
 ## German
-EMAIL_SUBJECT = 'Neue Wohnungsangebote'
-EMAIL_TEXT = 'Hey,\n{}\n{}\n'
-EMAIL_SITE_OFFERS_TEXT = '\nes gibt neue Wohnungen bei {}:\n{}\n'
-EMAIL_SITE_ERRORS_TEXT = '\nEs sind Fehler aufgetreten bei {}:\n{}\n'
+EMAIL_SUBJECT = "Neue Wohnungsangebote"
+EMAIL_TEXT = "Hey,\n{}\n{}\n"
+EMAIL_SITE_OFFERS_TEXT = "\nes gibt neue Wohnungen bei {}:\n{}\n"
+EMAIL_SITE_ERRORS_TEXT = "\nEs sind Fehler aufgetreten bei {}:\n{}\n"
 
-ERR_CONNECTION = 'Die Seite {} ({}) scheint nicht zu funktionieren. Konnte' \
-    + ' keine Angebote prüfen.'
-ERR_NOT_FOUND = 'Angebotsseite {} konnte nicht gefunden werden. Status war {}.'
-ERR_SUCCESS_NO_MATCHES = 'success-str bei {} gefunden, aber keine Matches.' \
-    + ' expose-url-pattern überprüfen.'
+ERR_CONNECTION = (
+    "Die Seite {} ( {} ) scheint nicht zu funktionieren. Konnte keine Angebote prüfen."
+)
+ERR_NOT_FOUND = "Angebotsseite {} konnte nicht gefunden werden. Status war {}."
+ERR_SUCCESS_NO_MATCHES = (
+    "success-str bei {} gefunden, aber keine Matches. expose-url-pattern überprüfen."
+)
 
-LOG_CRAWLING = 'crawling {}'
-LOG_NO_FLATS = '  no flats found at {}'
-LOG_NEW_RESULTS = ':: new results found, email sent ::'
-LOG_NO_NEW_RESULTS = ':: no new results ::'
+LOG_CRAWLING = "crawling {}"
+LOG_NO_FLATS = "  no flats found at {}"
+LOG_NEW_RESULTS = ":: new results found, email sent ::"
+LOG_NO_NEW_RESULTS = ":: no new results ::"
 LOG_WARN = 'WARNING: "{}" - {} ({} Neuversuche verbleiben)'
 LOG_ERR = 'ERROR: "{}" - {}'
 
 
 def main():
-    '''Check all pages, send emails if any offers or errors.'''
+    """Check all pages, send emails if any offers or errors."""
     results = {}
     for site in sites:
         offers, errors = check(site)
         if any(offers) or errors is not None:
-            results[site['name']] = (offers, errors)
+            results[site["name"]] = (offers, errors)
     if results:
         send_mail(results)
         print(LOG_NEW_RESULTS)
@@ -76,21 +75,21 @@ def main():
 
 
 def check(site, retries=2, backoff=1):
-    '''
+    """
     Check whether there are any flat exposes on a given site. Returns a tuple
     consisting of a list of offers and error.
     
     Check retries a certain amount of times (total connection attempts are
     thus retries+1) with slightly exponential backoff wait time between tries.
-    '''
-    site = defaultdict(lambda:None, site)
-    name = site['name']
-    url = site['url']
-    none_str = site['none-str']
-    success_str = site['success-str']
-    expose_pattern = site['expose-url-pattern']
+    """
+    site = defaultdict(lambda: None, site)
+    name = site["name"]
+    url = site["url"]
+    none_str = site["none-str"]
+    success_str = site["success-str"]
+    expose_pattern = site["expose-url-pattern"]
     base_url_parts = urlsplit(url)[:2]
-    
+
     print(LOG_CRAWLING.format(name))
     offers = set()
     err = None
@@ -107,9 +106,11 @@ def check(site, retries=2, backoff=1):
             debug_dump_site_html(name, result.text)
             matches = re.findall(expose_pattern, result.text)
             for match in matches:
-                match_url = urlunparse(base_url_parts \
-                    + (match if isinstance(match, str) else match.group(1),) \
-                    + ('',)*3)
+                match_url = urlunparse(
+                    base_url_parts
+                    + (match if isinstance(match, str) else match.group(1),)
+                    + ("",) * 3
+                )
                 if check_and_update_known(match_url):
                     offers.add(match_url)
             if not matches:
@@ -122,19 +123,21 @@ def check(site, retries=2, backoff=1):
         if retries > 0:
             print(LOG_WARN.format(name, err, retries))
             time.sleep(backoff)
-            return check(site, retries-1, (backoff+2)*1.5)
+            return check(site, retries - 1, (backoff + 2) * 1.5)
         else:
             print(LOG_ERR.format(name, err))
     return offers, err
 
 
 def check_and_update_known(url, text=None):
-    '''Keep track of individual flat urls that we've already seen.'''
+    """Keep track of individual flat urls that we've already seen."""
     if text is not None:
-        url += '|' + sha1(
-            BeautifulSoup(text, 'html.parser').get_text().encode()).hexdigest()
+        url += (
+            "|"
+            + sha1(BeautifulSoup(text, "html.parser").get_text().encode()).hexdigest()
+        )
     try:
-        with open(KNOWN_FILE, 'r+') as known_file:
+        with open(KNOWN_FILE, "r+") as known_file:
             if any([True for known in known_file if url in known]):
                 return False
             else:
@@ -145,48 +148,50 @@ def check_and_update_known(url, text=None):
 
 
 def send_mail(results):
-    '''
+    """
     Format and send an email containing a list of sites with lists of offers.
-    '''
+    """
     offers_strs = []
     errors_strs = []
     for site, (offer_list, error) in results.items():
         if error:
-            errors_strs.append(EMAIL_SITE_ERRORS_TEXT.format(site,
-                indent(error, '  ✖ ')))
+            errors_strs.append(
+                EMAIL_SITE_ERRORS_TEXT.format(site, indent(error, "  ✖ "))
+            )
         else:
-            offers_strs.append(EMAIL_SITE_OFFERS_TEXT.format(site,
-                indent(offer_list, '  ✔ ')))
-    text = EMAIL_TEXT.format('\n'.join(offers_strs), '\n'.join(errors_strs))
+            offers_strs.append(
+                EMAIL_SITE_OFFERS_TEXT.format(site, indent(offer_list, "  ✔ "))
+            )
+    text = EMAIL_TEXT.format("\n".join(offers_strs), "\n".join(errors_strs))
     mail = sendmail.Mail(RECIPIENTS[0], EMAIL_SUBJECT, text, bcc=RECIPIENTS[1:])
     mail.send()
 
 
 def format_code(code):
-    '''Returns the HTTP status code formatted like '200 ("ok")'.'''
+    """Returns the HTTP status code formatted like '200 ("ok")'."""
     return '{} ("{}")'.format(code, requests.status_codes._codes[code][0])
 
 
 def indent(text, indent):
-    '''Indent a text (or list of lines) with the given indent string.'''
+    """Indent a text (or list of lines) with the given indent string."""
     if isinstance(text, list) or isinstance(text, set):
-        return indent + ('\n'+indent).join(text)
+        return indent + ("\n" + indent).join(text)
     else:
-        return indent + text.replace('\n', '\n'+indent)
+        return indent + text.replace("\n", "\n" + indent)
 
 
 def truncate(string, max_len):
-    return string[:max_len-3] + '...' if len(string) > max_len else string
+    return string[: max_len - 3] + "..." if len(string) > max_len else string
 
 
 def debug_dump_site_html(name, html):
-    with open(f'site-{name}.html', 'w') as test_log:
+    with open(f"site-{name}.html", "w") as test_log:
         print(html, file=test_log)
 
 
 def print_service_file():
-    '''Print a systemd unit file to stdout'''
-    service_file = f'''\
+    """Print a systemd unit file to stdout"""
+    service_file = f"""\
 [Unit]
 Description=Check multiple websites for new flat exposes
 After=network-online.target nss-lookup.target
@@ -196,12 +201,12 @@ Type=simple
 ExecStart=/usr/bin/python3 -u {os.path.realpath(__file__)}
 
 [Install]
-WantedBy=multi-user.target'''
+WantedBy=multi-user.target"""
     print(service_file)
 
 
 def print_timer_file():
-    timer_file = f'''\
+    timer_file = f"""\
 [Unit]
 Description=Check multiple websites for new flat exposes
 
@@ -210,15 +215,15 @@ OnUnitActiveSec={CHECK_INTERVAL}s
 RandomizedDelaySec={CHECK_INTERVAL//4}s
 
 [Install]
-WantedBy=timers.target'''
+WantedBy=timers.target"""
     print(timer_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
-        if sys.argv[1] == 'service':
+        if sys.argv[1] == "service":
             print_service_file()
-        elif sys.argv[1] == 'timer':
+        elif sys.argv[1] == "timer":
             print_timer_file()
         else:
             print(f'Unknown command "{sys.argv[1]}"')
