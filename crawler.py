@@ -199,6 +199,7 @@ After=network-online.target nss-lookup.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 -u {os.path.realpath(__file__)}
+WorkingDirectory={os.path.realpath(__file__)}
 
 [Install]
 WantedBy=multi-user.target"""
