@@ -116,6 +116,13 @@ sites = [
         "url": "https://berolina.info/wohnungssuche/",
         "none-str": "Es tut uns leid, zur Zeit sind alle unsere Wohnungen vermietet und wir können Ihnen leider keine freien Wohnungen anbieten.",
     },
+    {
+        "name": "ebay Kleinanzeigen",
+        "url": f"https://www.ebay-kleinanzeigen.de/s-wohnung-mieten/berlin/anzeige:angebote/preis::{rent_max}/c203l3331+wohnung_mieten.etage_i:1,+wohnung_mieten.qm_d:{area_min},+wohnung_mieten.zimmer_d:{rooms_min},{rooms_max}",
+        "none-str": "Es wurden leider keine Anzeigen gefunden.",
+        "success-str": '<article class="aditem" data-adid="',
+        "expose-url-pattern": r'<a class="ellipsis" (?:name="[0-9]+?")? href="(/s-anzeige/.+?)">',
+    },
     # ...? Send me PRs!
 ]
 
