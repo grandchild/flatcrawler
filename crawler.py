@@ -32,7 +32,7 @@ hours = 60 * minutes
 ### Basic settings
 RECIPIENTS = [MailConfig.recipient, *MailConfig.bcc_recipients]
 CHECK_INTERVAL = 1 * hours
-URL_PRINT_LENGTH = 100  # print at maximimum n chars of the url in error messages
+URL_PRINT_LENGTH = 300  # print at maximimum n chars of the url in error messages
 KNOWN_FILE = "known.txt"
 
 ### Message strings
