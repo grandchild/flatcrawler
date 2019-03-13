@@ -1,9 +1,10 @@
 
-# don't commit login data
+# login data
 config.py
 
-# don't commit known flats file
+# known flats & errors file
 known.txt
+errors.txt
 
 # debug html dumps
 site-*.html
