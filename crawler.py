@@ -37,7 +37,7 @@ KNOWN_FILE = "known.txt"
 
 ### Message strings
 ## German
-EMAIL_SUBJECT = "Neue Wohnungsangebote"
+EMAIL_SUBJECT = "{} neue Wohnungsangebote"
 EMAIL_TEXT = "Hey,\n{}\n{}\n"
 EMAIL_SITE_OFFERS_TEXT = "\nes gibt neue Wohnungen bei {}:\n{}\n"
 EMAIL_SITE_ERRORS_TEXT = "\nEs sind Fehler aufgetreten bei {}:\n{}\n"
@@ -163,7 +163,9 @@ def send_mail(results):
                 EMAIL_SITE_OFFERS_TEXT.format(site, indent(offer_list, "  ✔ "))
             )
     text = EMAIL_TEXT.format("\n".join(offers_strs), "\n".join(errors_strs))
-    mail = sendmail.Mail(RECIPIENTS[0], EMAIL_SUBJECT, text, bcc=RECIPIENTS[1:])
+    mail = sendmail.Mail(
+        RECIPIENTS[0], EMAIL_SUBJECT.format(len(offers_strs)), text, bcc=RECIPIENTS[1:]
+    )
     mail.send()
 
 
