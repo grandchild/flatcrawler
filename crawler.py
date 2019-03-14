@@ -153,6 +153,7 @@ def send_mail(results):
     """
     offers_strs = []
     errors_strs = []
+    offers_count = 0
     for site, (offer_list, error) in results.items():
         if error:
             errors_strs.append(
@@ -162,9 +163,10 @@ def send_mail(results):
             offers_strs.append(
                 EMAIL_SITE_OFFERS_TEXT.format(site, indent(offer_list, "  ✔ "))
             )
+            offers_count += len(offer_list)
     text = EMAIL_TEXT.format("\n".join(offers_strs), "\n".join(errors_strs))
     mail = sendmail.Mail(
-        RECIPIENTS[0], EMAIL_SUBJECT.format(len(offers_strs)), text, bcc=RECIPIENTS[1:]
+        RECIPIENTS[0], EMAIL_SUBJECT.format(offers_count), text, bcc=RECIPIENTS[1:]
     )
     mail.send()
 
