@@ -22,7 +22,8 @@ from hashlib import sha1
 from bs4 import BeautifulSoup
 import requests
 import sendmail
-from config import sites, MailConfig
+from sites import sites
+from config import MailConfig
 
 seconds = 1
 minutes = 60 * seconds
