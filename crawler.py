@@ -190,7 +190,7 @@ def truncate(string, max_len):
 
 
 def debug_dump_site_html(name, html):
-    with open(f"site-{name}.html", "w") as test_log:
+    with open(f"debug-sites/site-{name}.html", "w") as test_log:
         print(html, file=test_log)
 
 
