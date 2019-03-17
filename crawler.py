@@ -22,7 +22,7 @@ from hashlib import sha1
 from bs4 import BeautifulSoup
 import requests
 import sendmail
-from sites import sites
+from sites import sites as site_configs
 from config import MailConfig
 
 seconds = 1
@@ -50,6 +50,10 @@ ERR_NOT_FOUND = "Angebotsseite {} konnte nicht gefunden werden. Status war {}."
 ERR_SUCCESS_NO_MATCHES = (
     "success-str bei {} gefunden, aber keine Matches. expose-url-pattern überprüfen."
 )
+ERR_EXPOSE_CONNECTION = (
+    "Die Seite {} scheint nicht zu funktionieren. Konnte keine Details ermitteln."
+)
+ERR_EXPOSE_NOT_FOUND = ERR_NOT_FOUND
 
 LOG_CRAWLING = "crawling {}"
 LOG_NO_FLATS = "  no flats found at {}"
@@ -59,93 +63,162 @@ LOG_WARN = 'WARNING: "{}" - {} ({} Neuversuche verbleiben)'
 LOG_ERR = 'ERROR: "{}" - {}'
 
 
+class Site:
+    def __init__(self, config={}):
+        self.config = defaultdict(lambda: None, config)
+        self.offers = set()
+        self.error = None
+        self.name = self.config["name"]
+        self.url = self.config["url"]
+        self.none_str = self.config["none-str"]
+        self.success_str = self.config["success-str"]
+        self.expose_pattern = self.config["expose-url-pattern"]
+        self.expose_details = self.config["expose-details"]
+
+    def check(self, retries=2, backoff=1):
+        """
+        Check whether there are any flat exposes on a given site. Returns a tuple
+        consisting of a list of offers and error.
+        
+        Check retries a certain amount of times (total connection attempts are
+        thus retries+1) with slightly exponential backoff wait time between tries.
+        """
+        base_url_parts = urlsplit(self.url)[:2]
+
+        print(LOG_CRAWLING.format(self.name))
+        self.error = None
+        try:
+            result = requests.get(self.url)
+            if not result.ok:
+                self.error = ERR_NOT_FOUND.format(
+                    self.name, format_code(result.status_code)
+                )
+            elif self.none_str and (self.none_str in result.text):
+                print(LOG_NO_FLATS.format(self.name))
+            elif self.success_str is None:
+                if self.check_and_update_known(self.url, result.text):
+                    self.offers.add(Offer(self.url, self.expose_details))
+            elif self.success_str in result.text:
+                debug_dump_site_html(self.name, result.text)
+                matches = re.findall(self.expose_pattern, result.text)
+                for match in matches:
+                    match_url = urlunparse(
+                        base_url_parts
+                        + (match if isinstance(match, str) else match.group(1),)
+                        + ("",) * 3
+                    )
+                    if self.check_and_update_known(match_url):
+                        self.offers.add(Offer(match_url, self.expose_details))
+                if not matches:
+                    self.error = ERR_SUCCESS_NO_MATCHES.format(self.name)
+            else:
+                self.error = ERR_CONNECTION.format(
+                    self.name, truncate(self.url, URL_PRINT_LENGTH)
+                )
+        except requests.exceptions.ConnectionError:
+            self.error = ERR_CONNECTION.format(
+                self.name, truncate(self.url, URL_PRINT_LENGTH)
+            )
+        if self.error:
+            if retries > 0:
+                print(LOG_WARN.format(self.name, self.error, retries))
+                time.sleep(backoff)
+                return self.check(retries - 1, (backoff + 2) * 1.5)
+            else:
+                print(LOG_ERR.format(self.name, self.error))
+
+    def check_and_update_known(self, url, text=None):
+        """Keep track of individual flat urls that we've already seen."""
+        if text is not None:
+            url += (
+                "|"
+                + sha1(
+                    BeautifulSoup(text, "html.parser").get_text().encode()
+                ).hexdigest()
+            )
+        try:
+            with open(KNOWN_FILE, "r+") as known_file:
+                if any([True for known in known_file if url in known]):
+                    return False
+                else:
+                    print(url, file=known_file)
+                    return True
+        except FileNotFoundError:
+            pass
+
+    def __str__(self):
+        if self.error:
+            return EMAIL_SITE_ERRORS_TEXT.format(self.name, indent(self.error, "  ✖ "))
+        else:
+            return EMAIL_SITE_OFFERS_TEXT.format(
+                self.name, "\n".join([str(o) for o in self.offers])
+            )
+
+    def __repr__(self):
+        return self.error if self.error else repr([o.url for o in self.offers])
+
+
+class Offer:
+    def __init__(self, url, details=None):
+        self.url = url
+        self.details = OfferDetails(url, details) if details else None
+
+    def __str__(self):
+        if self.details:
+            return (
+                f"  ✔ {self.details.title}\n"
+                + f"    {self.url}\n"
+                + indent(str(self.details).splitlines(), " " * 8)
+            )
+
+
+class OfferDetails:
+    def __init__(self, url, config):
+        self.config = config
+        self.url = url
+        self.details = defaultdict(lambda: None, {})
+        self.title = None
+
+        try:
+            result = requests.get(self.url)
+            if not result.ok:
+                self.error = ERR_EXPOSE_NOT_FOUND.format(
+                    self.url, format_code(result.status_code)
+                )
+            else:
+                for key, detail_pattern in self.config.items():
+                    match = re.search(detail_pattern, result.text)
+                    if match:
+                        match_str = match if isinstance(match, str) else match.group(1)
+                        if key == "title":
+                            self.title = match_str
+                        else:
+                            self.details[key] = match_str
+        except requests.exceptions.ConnectionError:
+            self.error = ERR_CONNECTION.format(truncate(self.url, URL_PRINT_LENGTH))
+
+    def __str__(self):
+        return "\n".join(
+            [f"{k.replace('_', ' ').title(): <10} {v}" for k, v in self.details.items()]
+        )
+
+
 def main():
     """Check all pages, send emails if any offers or errors."""
-    results = {}
-    for site in sites:
-        offers, errors = check(site)
-        if any(offers) or errors is not None:
-            results[site["name"]] = (offers, errors)
+    results = []
+
+    for site_config in site_configs:
+        site = Site(site_config)
+        site.check()
+        if any(site.offers) or site.error is not None:
+            results.append(site)
     if results:
         send_mail(results)
         print(LOG_NEW_RESULTS)
         print(results)
     else:
         print(LOG_NO_NEW_RESULTS)
-    return 0 if all([e is None for _, (_, e) in results.items()]) else 1
-
-
-def check(site, retries=2, backoff=1):
-    """
-    Check whether there are any flat exposes on a given site. Returns a tuple
-    consisting of a list of offers and error.
-    
-    Check retries a certain amount of times (total connection attempts are
-    thus retries+1) with slightly exponential backoff wait time between tries.
-    """
-    site = defaultdict(lambda: None, site)
-    name = site["name"]
-    url = site["url"]
-    none_str = site["none-str"]
-    success_str = site["success-str"]
-    expose_pattern = site["expose-url-pattern"]
-    base_url_parts = urlsplit(url)[:2]
-
-    print(LOG_CRAWLING.format(name))
-    offers = set()
-    err = None
-    try:
-        result = requests.get(url)
-        if not result.ok:
-            err = ERR_NOT_FOUND.format(name, format_code(result.status_code))
-        elif none_str and (none_str in result.text):
-            print(LOG_NO_FLATS.format(name))
-        elif success_str is None:
-            if check_and_update_known(url, result.text):
-                offers.add(url)
-        elif success_str in result.text:
-            debug_dump_site_html(name, result.text)
-            matches = re.findall(expose_pattern, result.text)
-            for match in matches:
-                match_url = urlunparse(
-                    base_url_parts
-                    + (match if isinstance(match, str) else match.group(1),)
-                    + ("",) * 3
-                )
-                if check_and_update_known(match_url):
-                    offers.add(match_url)
-            if not matches:
-                err = ERR_SUCCESS_NO_MATCHES.format(name)
-        else:
-            err = ERR_CONNECTION.format(name, truncate(url, URL_PRINT_LENGTH))
-    except requests.exceptions.ConnectionError:
-        err = ERR_CONNECTION.format(name, truncate(url, URL_PRINT_LENGTH))
-    if err:
-        if retries > 0:
-            print(LOG_WARN.format(name, err, retries))
-            time.sleep(backoff)
-            return check(site, retries - 1, (backoff + 2) * 1.5)
-        else:
-            print(LOG_ERR.format(name, err))
-    return offers, err
-
-
-def check_and_update_known(url, text=None):
-    """Keep track of individual flat urls that we've already seen."""
-    if text is not None:
-        url += (
-            "|"
-            + sha1(BeautifulSoup(text, "html.parser").get_text().encode()).hexdigest()
-        )
-    try:
-        with open(KNOWN_FILE, "r+") as known_file:
-            if any([True for known in known_file if url in known]):
-                return False
-            else:
-                print(url, file=known_file)
-                return True
-    except FileNotFoundError:
-        pass
+    return 0 if all([r.error is None for r in results]) else 1
 
 
 def send_mail(results):
@@ -155,16 +228,12 @@ def send_mail(results):
     offers_strs = []
     errors_strs = []
     offers_count = 0
-    for site, (offer_list, error) in results.items():
-        if error:
-            errors_strs.append(
-                EMAIL_SITE_ERRORS_TEXT.format(site, indent(error, "  ✖ "))
-            )
+    for site in results:
+        if site.error:
+            errors_strs.append(str(site))
         else:
-            offers_strs.append(
-                EMAIL_SITE_OFFERS_TEXT.format(site, indent(offer_list, "  ✔ "))
-            )
-            offers_count += len(offer_list)
+            offers_strs.append(str(site))
+            offers_count += len(site.offers)
     text = EMAIL_TEXT.format("\n".join(offers_strs), "\n".join(errors_strs))
     mail = sendmail.Mail(
         RECIPIENTS[0], EMAIL_SUBJECT.format(offers_count), text, bcc=RECIPIENTS[1:]

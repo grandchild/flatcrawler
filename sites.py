@@ -84,6 +84,14 @@ sites = [
         "none-str": "Es wurden leider keine Anzeigen gefunden.",
         "success-str": '<article class="aditem" data-adid="',
         "expose-url-pattern": r'<a class="ellipsis" (?:name="[0-9]+?")?\s+ href="(/s-anzeige/.+?)">',
+        "expose-details": {
+            "title": r'<h1 id="viewad-title" class="articleheader--title" itemprop="name">(.+?)</h1>',
+            "price": r'<h2 class="articleheader--price" id="viewad-price">Preis: (.+?)</h2>',
+            "location": r'<span id="viewad-locality" itemprop="locality">\s+(.+?)</span>',
+            "rooms": r'<dt class="attributelist--key">Zimmer:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
+            "total_rent": r'<dt class="attributelist--key">Warmmiete.+?:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
+            "floor": r'<dt class="attributelist--key">Etage:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
+        },
     },
     # ...? Send me PRs!
 ]
