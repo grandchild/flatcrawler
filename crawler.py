@@ -64,6 +64,10 @@ LOG_ERR = 'ERROR: "{}" - {}'
 
 
 class Site:
+    """
+    A website to be searched for new flats. Takes a *config* dict, which should include
+    most of the fields specified in `sites.py`.
+    """
     def __init__(self, config={}):
         self.config = defaultdict(lambda: None, config)
         self.offers = set()
@@ -80,8 +84,8 @@ class Site:
         Check whether there are any flat exposes on a given site. Returns a tuple
         consisting of a list of offers and error.
         
-        Check retries a certain amount of times (total connection attempts are
-        thus retries+1) with slightly exponential backoff wait time between tries.
+        Check retries a certain amount of times (total connection attempts are thus
+        retries+1) with slightly exponential backoff wait time between tries.
         """
         base_url_parts = urlsplit(self.url)[:2]
 
@@ -159,6 +163,10 @@ class Site:
 
 
 class Offer:
+    """
+    A single offer exposé. Takes a *url*, and if given a *details* dict, will retrieve
+    those details from the *url*, if present.
+    """
     def __init__(self, url, details=None):
         self.url = url
         self.details = OfferDetails(url, details) if details else None
@@ -175,6 +183,12 @@ class Offer:
 
 
 class OfferDetails:
+    """
+    A list of extra details about an offer exposé. Takes a *url*, and a *config* dict,
+    much like :py:class:`Site` does, containing keys with regex strings. The *url* is
+    retrieved and any details for which the regex patterns match will be collected into
+    `self.details`.
+    """
     def __init__(self, url, config):
         self.config = config
         self.url = url
@@ -224,9 +238,7 @@ def main():
 
 
 def send_mail(results):
-    """
-    Format and send an email containing a list of sites with lists of offers.
-    """
+    """Format and send an email containing a list of sites with lists of offers."""
     offers_strs = []
     errors_strs = []
     offers_count = 0
@@ -266,7 +278,10 @@ def debug_dump_site_html(name, html):
 
 
 def print_service_file(user_param=False):
-    """Print a systemd unit file to stdout"""
+    """
+    Print a systemd unit file to stdout. If *user_param* is True, output will be an
+    @-parameterized service file that runs as the given user.
+    """
     service_file = f"""\
 [Unit]
 Description=Check various websites for new flat exposes{" for %I" if user_param else ""}
