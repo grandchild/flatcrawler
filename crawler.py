@@ -194,17 +194,18 @@ def debug_dump_site_html(name, html):
         print(html, file=test_log)
 
 
-def print_service_file():
+def print_service_file(user_param=False):
     """Print a systemd unit file to stdout"""
     service_file = f"""\
 [Unit]
-Description=Check multiple websites for new flat exposes
+Description=Check various websites for new flat exposes{" for %I" if user_param else ""}
 After=network-online.target nss-lookup.target
 
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 -u "{os.path.realpath(__file__)}"
 WorkingDirectory={os.path.dirname(os.path.realpath(__file__))}
+{"User=%i" if user_param else ""}
 
 [Install]
 WantedBy=multi-user.target"""
@@ -229,6 +230,8 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         if sys.argv[1] == "service":
             print_service_file()
+        elif sys.argv[1] == "service@":
+            print_service_file(user_param=True)
         elif sys.argv[1] == "timer":
             print_timer_file()
         else:
