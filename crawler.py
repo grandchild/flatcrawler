@@ -19,6 +19,7 @@ import time
 from collections import defaultdict
 from urllib.parse import urlsplit, urlunparse
 from hashlib import sha1
+from argparse import ArgumentParser
 from bs4 import BeautifulSoup
 import requests
 import sendmail
@@ -316,18 +317,26 @@ WantedBy=timers.target"""
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "service":
-            print_service_file()
-        elif sys.argv[1] == "service@":
-            print_service_file(user_param=True)
-        elif sys.argv[1] == "timer":
-            print_timer_file()
-        else:
-            print(f'Unknown command "{sys.argv[1]}"')
-            sys.exit(1)
-        sys.exit(0)
-    try:
-        sys.exit(main())
-    except KeyboardInterrupt:
-        sys.exit(0)
+    parser = ArgumentParser(description="Crawl flat offer websites for new flats.")
+    parser.add_argument(
+        "systemd",
+        nargs="?",
+        choices=["service", "service@", "timer"],
+        default=None,
+        help=(
+            "Print a systemd unit file of the specified type."
+            + " Use 'systemd@' to print a service file that allows a User parameter."
+        ),
+    )
+    args = parser.parse_args()
+    if args.systemd == "service":
+        print_service_file()
+    elif args.systemd == "service@":
+        print_service_file(user_param=True)
+    elif args.systemd == "timer":
+        print_timer_file()
+    else:
+        try:
+            sys.exit(main())
+        except KeyboardInterrupt:
+            sys.exit(0)
