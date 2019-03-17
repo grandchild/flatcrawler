@@ -6,12 +6,15 @@ from config import *
 
 
 """
-name: name of site (must be unique)
-url: website url where offers should appear
-none-str: a string that appears in the website html in case nothing has been found
+name: name of site.
+url: website url where offers should appear.
+none-str: a string that appears in the website html in case nothing has been found.
 success-str: a string that appears in the website html in case something has been found.
-expose-url-pattern: regex for links that point to offer exposes and should be sent out via email
-notes: general notes on the site (currently not used)
+expose-url-pattern: regex for links that point to offer exposés and should be sent out
+    via email.
+notes: general notes on the site (currently not used).
+expose-details: a mapping from keys to regex strings, used to extract further details
+    from an exposé page.
 """
 sites = [
     {
