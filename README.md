@@ -35,10 +35,16 @@ the parameter `service` and `timer` respectively:
 ./crawler.py service > ~/.local/share/systemd/user/flatcrawler.service
 ./crawler.py timer > ~/.local/share/systemd/user/flatcrawler.timer
 systemctl --user daemon-reload
-systemctl enable --now flatcrawler.timer
+systemctl --user enable --now flatcrawler.timer
 ```
 
 The timer defaults to a one hour interval (delayed randomly by up to 15min).
+
+
+If you don't want to run all the above on your own, you can use the `install` command to
+just install the service files or the `run` command to install the service files and
+start the timer right away.
+
 
 Check that the timer is running with:
 

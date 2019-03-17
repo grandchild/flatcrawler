@@ -19,6 +19,7 @@ import time
 from collections import defaultdict
 from urllib.parse import urlsplit, urlunparse
 from hashlib import sha1
+from pathlib import Path
 from argparse import ArgumentParser
 from bs4 import BeautifulSoup
 import requests
@@ -281,12 +282,12 @@ def debug_dump_site_html(name, html):
         print(html, file=test_log)
 
 
-def print_service_file(user_param=False):
+def service_file(user_param=False):
     """
-    Print a systemd unit file to stdout. If *user_param* is True, output will be an
+    Create a systemd unit file to stdout. If *user_param* is True, output will be an
     @-parameterized service file that runs as the given user.
     """
-    service_file = f"""\
+    return f"""\
 [Unit]
 Description=Check various websites for new flat exposes{" for %I" if user_param else ""}
 After=network-online.target nss-lookup.target
@@ -302,8 +303,13 @@ WantedBy=multi-user.target"""
     print(service_file)
 
 
-def print_timer_file():
-    timer_file = f"""\
+def timer_file():
+    """
+    Create a systemd timer file, targeting the service file, which runs every 
+    CHECK_INTERVAL seconds.
+    """
+    
+    return f"""\
 [Unit]
 Description=Check multiple websites for new flat exposes
 
@@ -313,7 +319,27 @@ RandomizedDelaySec={CHECK_INTERVAL//4}s
 
 [Install]
 WantedBy=timers.target"""
-    print(timer_file)
+
+
+def install(run=False):
+    """
+    Install service and timer files to user systemd folder, optionally enable and start
+    the timer as well.
+    """
+
+    target_path = os.path.join(Path.home(), ".local/share/systemd/user/")
+    try:
+        os.makedirs(target_path, exist_ok=True)
+        with open(os.path.join(target_path, "flatcrawler.service"), "w") as service:
+            print(service_file(), file=service)
+        with open(os.path.join(target_path, "flatcrawler.timer"), "w") as timer:
+            print(timer_file(), file=timer)
+    except (PermissionError, FileNotFoundError, IOError) as err:
+        print(err, file=sys.stderr)
+        return 2
+    if run:
+        os.system("systemctl --user daemon-reload")
+        return os.system("systemctl --user enable --now flatcrawler.timer")
 
 
 if __name__ == "__main__":
@@ -321,20 +347,27 @@ if __name__ == "__main__":
     parser.add_argument(
         "systemd",
         nargs="?",
-        choices=["service", "service@", "timer"],
+        choices=["service", "service@", "timer", "install", "run"],
         default=None,
         help=(
             "Print a systemd unit file of the specified type."
             + " Use 'systemd@' to print a service file that allows a User parameter."
+            + " Use 'install' to create the service and timer in"
+            + " ~/.local/share/systemd/user/. Use 'run' to install, start and enable"
+            + " the timer, all in one command."
         ),
     )
     args = parser.parse_args()
     if args.systemd == "service":
-        print_service_file()
+        print(service_file())
     elif args.systemd == "service@":
-        print_service_file(user_param=True)
+        print(service_file(user_param=True))
     elif args.systemd == "timer":
-        print_timer_file()
+        print(timer_file())
+    elif args.systemd == "install":
+        sys.exit(install())
+    elif args.systemd == "run":
+        sys.exit(install(run=True))
     else:
         try:
             sys.exit(main())
