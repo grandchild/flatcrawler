@@ -170,6 +170,8 @@ class Offer:
                 + f"    {self.url}\n"
                 + indent(str(self.details).splitlines(), " " * 8)
             )
+        else:
+            return f"  ✔ {self.url}"
 
 
 class OfferDetails:
