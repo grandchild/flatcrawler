@@ -1,9 +1,7 @@
 # CC0 - free software.
 # To the extent possible under law, all copyright and related or neighboring
 # rights to this work are waived.
-
 from config import *
-
 
 """
 name: name of site.

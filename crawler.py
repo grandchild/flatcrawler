@@ -68,6 +68,7 @@ class Site:
     A website to be searched for new flats. Takes a *config* dict, which should include
     most of the fields specified in `sites.py`.
     """
+
     def __init__(self, config={}):
         self.config = defaultdict(lambda: None, config)
         self.offers = set()
@@ -167,6 +168,7 @@ class Offer:
     A single offer exposé. Takes a *url*, and if given a *details* dict, will retrieve
     those details from the *url*, if present.
     """
+
     def __init__(self, url, details=None):
         self.url = url
         self.details = OfferDetails(url, details) if details else None
@@ -189,6 +191,7 @@ class OfferDetails:
     retrieved and any details for which the regex patterns match will be collected into
     `self.details`.
     """
+
     def __init__(self, url, config):
         self.config = config
         self.url = url
