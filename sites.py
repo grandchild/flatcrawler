@@ -89,7 +89,7 @@ sites = [
             "title": r'<h1 id="viewad-title" class="articleheader--title" itemprop="name">(.+?)</h1>',
             "total_rent": r'<dt class="attributelist--key">Warmmiete.+?:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
             "price": r'<h2 class="articleheader--price" id="viewad-price">Preis: (.+?)</h2>',
-            "location": r'<span id="viewad-locality" itemprop="locality">\s+(.+?)</span>',
+            "location": r'(?:<span id="street-address" itemprop="street-address">\s+(.+?)</span>,\s+)?<span id="viewad-locality" itemprop="locality">\s+(.+?)</span>',
             "rooms": r'<dt class="attributelist--key">Zimmer:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
             "area": r'<dt class="attributelist--key">Wohnfläche.+?:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
             "floor": r'<dt class="attributelist--key">Etage:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
