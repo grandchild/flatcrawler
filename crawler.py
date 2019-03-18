@@ -284,7 +284,7 @@ def debug_dump_site_html(name, html):
 
 def service_file(user_param=False):
     """
-    Create a systemd unit file to stdout. If *user_param* is True, output will be an
+    Create a systemd unit file. If *user_param* is True, output will be an
     @-parameterized service file that runs as the given user.
     """
     return f"""\
@@ -300,7 +300,6 @@ WorkingDirectory={os.path.dirname(os.path.realpath(__file__))}
 
 [Install]
 WantedBy=multi-user.target"""
-    print(service_file)
 
 
 def timer_file():
