@@ -40,7 +40,7 @@ KNOWN_FILE = "known.txt"
 
 ### Message strings
 ## German
-EMAIL_SUBJECT = "{} neue Wohnungsangebote"
+EMAIL_SUBJECT = "[Wohnung] {} neue Wohnungsangebote"
 EMAIL_TEXT = "Hey,\n{}\n{}\n"
 EMAIL_SITE_OFFERS_TEXT = "\nes gibt neue Wohnungen bei {}:\n{}\n"
 EMAIL_SITE_ERRORS_TEXT = "\nEs sind Fehler aufgetreten bei {}:\n{}\n"
@@ -59,7 +59,8 @@ ERR_EXPOSE_NOT_FOUND = ERR_NOT_FOUND
 
 LOG_CRAWLING = "crawling {}"
 LOG_NO_FLATS = "  no flats found at {}"
-LOG_NEW_RESULTS = ":: new results found, email sent ::"
+LOG_NEW_RESULTS = ":: new results found ::"
+LOG_EMAIL_SENT = ":: email sent ::"
 LOG_NO_NEW_RESULTS = ":: no new results ::"
 LOG_WARN = 'WARNING: "{}" - {} ({} Neuversuche verbleiben)'
 LOG_ERR = 'ERROR: "{}" - {}'
@@ -224,7 +225,7 @@ class OfferDetails:
         )
 
 
-def main():
+def main(options):
     """Check all pages, send emails if any offers or errors."""
     results = []
 
@@ -234,8 +235,10 @@ def main():
         if any(site.offers) or site.error is not None:
             results.append(site)
     if results:
-        send_mail(results)
         print(LOG_NEW_RESULTS)
+        if not options.no_email:
+            print(LOG_EMAIL_SENT)
+            send_mail(results)
         print(results)
     else:
         print(LOG_NO_NEW_RESULTS)
@@ -304,10 +307,10 @@ WantedBy=multi-user.target"""
 
 def timer_file():
     """
-    Create a systemd timer file, targeting the service file, which runs every 
+    Create a systemd timer file, targeting the service file, which runs every
     CHECK_INTERVAL seconds.
     """
-    
+
     return f"""\
 [Unit]
 Description=Check multiple websites for new flat exposes
@@ -356,6 +359,9 @@ if __name__ == "__main__":
             + " the timer, all in one command."
         ),
     )
+    parser.add_argument(
+        "--no-email", action="store_true", help="Don't send an email, only log results"
+    )
     args = parser.parse_args()
     if args.systemd == "service":
         print(service_file())
@@ -369,6 +375,6 @@ if __name__ == "__main__":
         sys.exit(install(run=True))
     else:
         try:
-            sys.exit(main())
+            sys.exit(main(args))
         except KeyboardInterrupt:
             sys.exit(0)
