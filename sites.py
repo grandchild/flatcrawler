@@ -17,11 +17,29 @@ expose-details: a mapping from keys to regex strings, used to extract further de
 sites = [
     {
         "name": "Gewobag",
-        "url": f"https://www.gewobag.de/mieten-7.html?zimmer_von={rooms_min}&zimmer_bis={rooms_max}&wohnung=1&ortsteil={gewobag_districts}&start=0&do=AKTUALISIEREN",
+        "url": (
+            "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?nutzungsarten%5B%5D=wohnung"
+            f"&zimmer_von={rooms_min}&zimmer_bis={rooms_max}"
+            f"&bezirke%5B%5D={gewobag_districts}"
+            f"{'keineg=1' if floor_min >= 1 else ''}"
+            # "&start=0"
+        ),
         "none-str": "Zur Zeit sind leider keine passenden Angebote verfügbar",
-        "success-str": "Seite 1 von",
-        "expose-url-pattern": r'href="(expose_.+?html)',
-        "notes": "nur prenzlberg",
+        "success-str": '<div class="angebot-content">',
+        "expose-url-pattern": r'<a href="https://www\.gewobag\.de/(fuer-mieter-und-mietinteressenten/mietangebote/[0-9-]+/)" class="read-more-link">Mietangebot ansehen',
+        "expose-details": {
+            "title": r'<h1 class="entry-title">(.+?)</h1>',
+            "price": r'<div class="detail-label">Grundmiete</div>\s+<div class="detail-value">(.+?) Euro</div>',
+            "total_rent": r'<div class="detail-label">Gesamtmiete</div>\s+<div class="detail-value">(.+?) Euro</div>',
+            "safety": r'<div class="detail-label">Kaution</div>\s+<div class="detail-value">(.+?) (?:€|Euro)</div>',
+            "location": r'<div class="detail-label">Anschrift</div>\s+<div class="detail-value">(.+?)</div>',
+            "quarter": r'<div class="detail-label">Bezirk/Ortsteil</div>\s+<div class="detail-value">(.+?)</div>',
+            "description": r'<div class="detail-label">Beschreibung</div>\s+<div class="detail-value">(.+?)</div>',
+            "floor": r'<div class="detail-label">Etage</div>\s+<div class="detail-value">(.+?)</div>',
+            "rooms": r'<div class="detail-label">Anzahl Zimmer</div>\s+<div class="detail-value">(.+?)</div>',
+            "area": r'<div class="detail-label">Fl&auml;che in m²</div>\s+<div class="detail-value">(.+?)</div>',
+            "vacantby": r'<div class="detail-label">Frei ab</div>\s+\s+<div class="detail-value capitalize">(.+?)</div>',
+        },
     },
     {
         "name": "Habitat e.G.",
