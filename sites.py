@@ -55,8 +55,8 @@ sites = [
     },
     {
         "name": "EWG Pankow",
-        "url": "https://www.ewg-pankow.de/wohnen/wohnungsangebote.html",
-        "none-str": "Ihre Suche lieferte keine passenden Ergebnisse",
+        "url": "https://www.ewg-pankow.de/wohnen/",
+        "none-str": "Aktuell ist leider kein Wohnungsangebot verfügbar.",
         "success-str": "zum Exposé",
         "expose-url-pattern": r'href="(wohnen/wohnungsangebote/wohnungsdetails/.+?html)',
     },
