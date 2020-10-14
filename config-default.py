@@ -2,7 +2,7 @@
 # To the extent possible under law, all copyright and related or neighboring
 # rights to this work are waived.
 
-"""Configure your type of flat. Not all fields are used by all sites."""
+"""Configure your flat criteria. Not all fields are used by all sites."""
 rooms_min = 2
 rooms_max = rooms_min
 area_min = 40
@@ -10,6 +10,7 @@ area_max = 200
 rent_max = 1000
 floor_min = 1
 floor_max = 1000
+wbs = False  # Wohnberechtigungsschein (If you don't know what this is leave it False)
 
 ### DeGeWo district IDs, select the ones you'd like to include below (as strings!).
 degewo_districts = "%2C+".join([
