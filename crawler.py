@@ -211,11 +211,15 @@ class OfferDetails:
                 for key, detail_pattern in self.config.items():
                     match = re.search(detail_pattern, result.text)
                     if match:
-                        match_str = match if isinstance(match, str) else match.group(1)
+                        match_str = (
+                            match
+                            if isinstance(match, str)
+                            else " ".join(match.groups(""))
+                        )
                         if key == "title":
-                            self.title = match_str
+                            self.title = match_str.strip()
                         else:
-                            self.details[key] = match_str
+                            self.details[key] = match_str.strip()
         except requests.exceptions.ConnectionError:
             self.error = ERR_CONNECTION.format(truncate(self.url, URL_PRINT_LENGTH))
 
