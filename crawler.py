@@ -245,17 +245,27 @@ def main(options):
             results.append(site)
     if results:
         print(LOG_NEW_RESULTS)
+        mail_subject, mail_text = format_mail(results)
         if not options.no_email:
             print(LOG_EMAIL_SENT)
-            send_mail(results)
-        print(results)
+            send_mail(mail_subject, mail_text)
+        else:
+            print()
+            print(mail_subject)
+            print()
+            print(mail_text)
+        if options.debug:
+            print(results)
     else:
         print(LOG_NO_NEW_RESULTS)
     return 0 if all([r.error is None for r in results]) else 1
 
 
-def send_mail(results):
-    """Format and send an email containing a list of sites with lists of offers."""
+def format_mail(results):
+    """
+    Format and the email subject and text containing a list of sites with lists of
+    offers.
+    """
     offers_strs = []
     errors_strs = []
     offers_count = 0
@@ -266,9 +276,14 @@ def send_mail(results):
             offers_strs.append(str(site))
             offers_count += len(site.offers)
     text = EMAIL_TEXT.format("\n".join(offers_strs), "\n".join(errors_strs))
-    mail = sendmail.Mail(
-        RECIPIENTS[0], EMAIL_SUBJECT.format(offers_count), text, bcc=RECIPIENTS[1:]
-    )
+    return EMAIL_SUBJECT.format(offers_count), text
+
+
+def send_mail(subject, text):
+    """
+    Send an email to the configured recipients containing the given subject and content.
+    """
+    mail = sendmail.Mail(RECIPIENTS[0], subject, text, bcc=RECIPIENTS[1:])
     mail.send()
 
 
@@ -371,6 +386,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--no-email", action="store_true", help="Don't send an email, only log results"
     )
+    parser.add_argument("--debug", action="store_true", help="Dump raw results")
     parser.add_argument(
         "--include-known", action="store_true", help="Include known results"
     )
