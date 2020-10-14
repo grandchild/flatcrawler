@@ -109,21 +109,21 @@ sites = [
         "url": "https://berolina.info/wohnungssuche/",
         "none-str": "Es tut uns leid, zur Zeit sind alle unsere Wohnungen vermietet und wir können Ihnen leider keine freien Wohnungen anbieten.",
     },
-    {
-        "name": "ebay Kleinanzeigen",
-        "url": f"https://www.ebay-kleinanzeigen.de/s-wohnung-mieten/berlin/anzeige:angebote/preis::{rent_max}/c203l3331+wohnung_mieten.etage_i:1,+wohnung_mieten.qm_d:{area_min},+wohnung_mieten.zimmer_d:{rooms_min},{rooms_max}",
-        "none-str": "Es wurden leider keine Anzeigen gefunden.",
-        "success-str": '<article class="aditem" data-adid="',
-        "expose-url-pattern": r'<a class="ellipsis" (?:name="[0-9]+?")?\s+ href="(/s-anzeige/.+?)">',
-        "expose-details": {
-            "title": r'<h1 id="viewad-title" class="articleheader--title" itemprop="name">(.+?)</h1>',
-            "total_rent": r'<dt class="attributelist--key">Warmmiete.+?:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
-            "price": r'<h2 class="articleheader--price" id="viewad-price">Preis: (.+?)</h2>',
-            "location": r'(?:<span id="street-address" itemprop="street-address">\s+(.+?)</span>,\s+)?<span id="viewad-locality" itemprop="locality">\s+(.+?)</span>',
-            "rooms": r'<dt class="attributelist--key">Zimmer:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
-            "area": r'<dt class="attributelist--key">Wohnfläche.+?:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
-            "floor": r'<dt class="attributelist--key">Etage:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
-        },
-    },
+    # {
+    #     "name": "ebay Kleinanzeigen",
+    #     "url": f"https://www.ebay-kleinanzeigen.de/s-wohnung-mieten/berlin/anzeige:angebote/preis::{rent_max}/c203l3331+wohnung_mieten.etage_i:{floor_min},{floor_max}+wohnung_mieten.qm_d:{area_min},+wohnung_mieten.zimmer_d:{rooms_min},{rooms_max}",
+    #     "none-str": "Es wurden leider keine Anzeigen gefunden.",
+    #     "success-str": '<article class="aditem" data-adid="',
+    #     "expose-url-pattern": r'<a class="ellipsis" (?:name="[0-9]+?")?\s+ href="(/s-anzeige/.+?)">',
+    #     "expose-details": {
+    #         "title": r'<h1 id="viewad-title" class="articleheader--title" itemprop="name">(.+?)</h1>',
+    #         "total_rent": r'<dt class="attributelist--key">Warmmiete.+?:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
+    #         "price": r'<h2 class="articleheader--price" id="viewad-price">Preis: (.+?)</h2>',
+    #         "location": r'(?:<span id="street-address" itemprop="street-address">\s+(.+?)</span>,\s+)?<span id="viewad-locality" itemprop="locality">\s+(.+?)</span>',
+    #         "rooms": r'<dt class="attributelist--key">Zimmer:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
+    #         "area": r'<dt class="attributelist--key">Wohnfläche.+?:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
+    #         "floor": r'<dt class="attributelist--key">Etage:</dt>\s+<dd class="attributelist--value">\s+<span >\s+(.+?)</span>',
+    #     },
+    # },
     # ...? Send me PRs!
 ]
