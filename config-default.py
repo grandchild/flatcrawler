@@ -24,7 +24,7 @@ degewo_districts = "%2C+".join([
     "33",     # Charlottenburg-Wilmersdorf
     "64",     # Reinickendorf
     "2",      # Marzahn-Hellersdorf
-    "4-65",   # Spandau
+    "4-8",    # Spandau
     "58",     # Steglitz-Zehlendorf
     "40-67",  # Umland
 ])

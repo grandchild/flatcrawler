@@ -62,10 +62,22 @@ sites = [
     },
     {
         "name": "DeGeWo",
-        "url": f"https://immosuche.degewo.de/de/search?size=10&page=1&property_type_id=1&categories%5B%5D=1&lat=&lon=&area=&address%5Bstreet%5D=&address%5Bcity%5D=&address%5Bzipcode%5D=&address%5Bdistrict%5D=&district={degewo_districts}&property_number=&price_switch=true&price_radio=custom&price_from=0&price_to={rent_max}&qm_radio=custom&qm_from={area_min}&qm_to={area_max}&rooms_radio=custom&rooms_from={rooms_min}&rooms_to={rooms_max}&order=rent_total_without_vat_asc",
+        "url": f"https://immosuche.degewo.de/de/search?size=10&page=1&property_type_id=1&categories%5B%5D=1&lat=&lon=&area=&address%5Bstreet%5D=&address%5Bcity%5D=&address%5Bzipcode%5D=&address%5Bdistrict%5D=&district={degewo_districts}&property_number=&price_switch=true&price_radio=custom&price_from=&price_to={rent_max}&qm_radio=custom&qm_from={area_min}&qm_to={area_max}&rooms_radio=custom&rooms_from={rooms_min}&rooms_to={rooms_max}&wbs_required={'true' if wbs else 'false'}&order=rent_total_without_vat_asc",
         "none-str": "0</span>\n Treffer anzeigen",
         "success-str": "<div class='merken merken__article-list js-merken' data-objectid=",
-        "expose-url-pattern": r'href="(/de/properties/.+?)"><div class=\'article-list__image',
+        "expose-url-pattern": r'href="(/de/properties/W[0-9-]+?)"><div class=\'article-list__image',
+        "expose-details": {
+            "title": r"<h1 class=\'article__title\'>\s+(.+?)\s+</h1>",
+            "location": r"<span class='expose__meta'>(.+?)</span>",
+            "price": r"<li class=\'ce-table__list-item\'>Nettokaltmiete: (.+?) €</li>",
+            "total_rent": r"<div class=\'expose__price-tag\'>\s+(.+?) €>",
+            "safety": r"<li class=\'ce-table__list-item\'>Kaution: (.+?)</li>",
+            "rooms": r"<td class=\'teaser-tileset__table-item\'>Zimmer</td>\s+<td class=\'teaser-tileset__table-item\'>(.+?)</td>",
+            "area": r"<td class=\'teaser-tileset__table-item\'>Wohnfläche</td>\s+<td class=\'teaser-tileset__table-item\'>(.+?) m²</td>",
+            "vacantby": r"<td class=\'teaser-tileset__table-item\'>Verfügbar ab</td>\s+<td class=\'teaser-tileset__table-item\'>(.+?)</td>",
+            "floor": r"<td class=\'teaser-tileset__table-item\'>Geschoss / Anzahl</td>\s+<td class=\'teaser-tileset__table-item\'>(.+?)</td>",
+            "constructionyear": r"<td class=\'teaser-tileset__table-item\'>Baujahr</td>\s+<td class=\'teaser-tileset__table-item\'>(.+?)</td>",
+        },
     },
     ### uses XHR dynamic reloading, but has own email subscription
     # {
