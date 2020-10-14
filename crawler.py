@@ -83,11 +83,11 @@ class Site:
         self.expose_pattern = self.config["expose-url-pattern"]
         self.expose_details = self.config["expose-details"]
 
-    def check(self, retries=2, backoff=1):
+    def check(self, retries=2, backoff=1, include_known=False):
         """
         Check whether there are any flat exposes on a given site. Returns a tuple
         consisting of a list of offers and error.
-        
+
         Check retries a certain amount of times (total connection attempts are thus
         retries+1) with slightly exponential backoff wait time between tries.
         """
@@ -101,10 +101,11 @@ class Site:
                 self.error = ERR_NOT_FOUND.format(
                     self.name, format_code(result.status_code)
                 )
-            elif self.none_str and (self.none_str in result.text):
-                print(LOG_NO_FLATS.format(self.name))
+
             elif self.success_str is None:
-                if self.check_and_update_known(self.url, result.text):
+                if self.check_and_update_known(
+                    self.url, result.text, include_known=include_known
+                ):
                     self.offers.add(Offer(self.url, self.expose_details))
             elif self.success_str in result.text:
                 debug_dump_site_html(self.name, result.text)
@@ -115,10 +116,14 @@ class Site:
                         + (match if isinstance(match, str) else match.group(1),)
                         + ("",) * 3
                     )
-                    if self.check_and_update_known(match_url):
+                    if self.check_and_update_known(
+                        match_url, include_known=include_known
+                    ):
                         self.offers.add(Offer(match_url, self.expose_details))
                 if not matches:
                     self.error = ERR_SUCCESS_NO_MATCHES.format(self.name)
+            elif self.none_str and (self.none_str in result.text):
+                print(LOG_NO_FLATS.format(self.name))
             else:
                 self.error = ERR_CONNECTION.format(
                     self.name, truncate(self.url, URL_PRINT_LENGTH)
@@ -135,7 +140,7 @@ class Site:
             else:
                 print(LOG_ERR.format(self.name, self.error))
 
-    def check_and_update_known(self, url, text=None):
+    def check_and_update_known(self, url, text=None, include_known=False):
         """Keep track of individual flat urls that we've already seen."""
         if text is not None:
             url += (
@@ -147,7 +152,7 @@ class Site:
         try:
             with open(KNOWN_FILE, "r+") as known_file:
                 if any([True for known in known_file if url in known]):
-                    return False
+                    return include_known
                 else:
                     print(url, file=known_file)
                     return True
@@ -235,7 +240,7 @@ def main(options):
 
     for site_config in site_configs:
         site = Site(site_config)
-        site.check()
+        site.check(include_known=options.include_known)
         if any(site.offers) or site.error is not None:
             results.append(site)
     if results:
@@ -365,6 +370,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--no-email", action="store_true", help="Don't send an email, only log results"
+    )
+    parser.add_argument(
+        "--include-known", action="store_true", help="Include known results"
     )
     args = parser.parse_args()
     if args.systemd == "service":
