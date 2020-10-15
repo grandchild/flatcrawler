@@ -48,7 +48,7 @@ EMAIL_SITE_ERRORS_TEXT = "\nEs sind Fehler aufgetreten bei {}:\n{}\n"
 ERR_CONNECTION = (
     "Die Seite {} ( {} ) scheint nicht zu funktionieren. Konnte keine Angebote prüfen."
 )
-ERR_NOT_FOUND = "Angebotsseite {} konnte nicht gefunden werden. Status war {}."
+ERR_NOT_FOUND = "Angebotsseite {} konnte nicht gefunden werden. Status war {}.\n{}"
 ERR_SUCCESS_NO_MATCHES = (
     "success-str bei {} gefunden, aber keine Matches. expose-url-pattern überprüfen."
 )
@@ -99,7 +99,7 @@ class Site:
             result = requests.get(self.url)
             if not result.ok:
                 self.error = ERR_NOT_FOUND.format(
-                    self.name, format_code(result.status_code)
+                    self.name, format_code(result.status_code), self.url
                 )
 
             elif self.success_str is None:
@@ -210,7 +210,7 @@ class OfferDetails:
             result = requests.get(self.url)
             if not result.ok:
                 self.error = ERR_EXPOSE_NOT_FOUND.format(
-                    self.url, format_code(result.status_code)
+                    "", format_code(result.status_code), self.url
                 )
             else:
                 for key, detail_pattern in self.config.items():
