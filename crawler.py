@@ -168,7 +168,13 @@ class Site:
             )
 
     def __repr__(self):
-        return self.error if self.error else repr([o.url for o in self.offers])
+        return (
+            self.error
+            if self.error
+            else repr(
+                [(o.url, o.details.details if o.details else None) for o in self.offers]
+            )
+        )
 
 
 class Offer:
