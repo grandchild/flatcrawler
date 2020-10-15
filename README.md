@@ -18,8 +18,11 @@ You can also add new webpages in `sites.py` along the lines of the existing ones
 me know (create an issue, or a pull request maybe) if there are any more one should add.
 
 Then either run the `crawler.py` script directly, or use the _systemd_ services as
-[described below](#systemd). To debug or test the script, run `crawler.py --no-email` to
-skip email sending and only print results.
+[described below](#systemd). To debug or test the script, run
+```
+crawler.py --no-email --include-known
+```
+to skip email sending and print all items that would be sent in a new run.
 
 ## Python
 
