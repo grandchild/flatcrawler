@@ -16,6 +16,23 @@ expose-details: a mapping from keys to regex strings, used to extract further de
 """
 sites = [
     {
+        "name": "Wohnungsbaugenossenschaft DPF eG",
+        "url": "https://www.dpfonline.de/interessenten/immobilien/",
+        "success-str": '<div class="immo-a-info">',
+        "expose-url-pattern": r'<a href="https://www\.dpfonline\.de/(immobilien/.+?)/">',
+        "expose-details": {
+            "title": r'<h1 class="immo-caption">\s+?(.+?)\s+?</h1>',
+            "price": r'<td>Kaltmiete</td>\s+?<td>\s+?(.+?)\s+?</td>',
+            "total_rent": r'<td>Gesamtmiete</td>\s+?<td>\s+?(.+?)\s+?</td>',
+            "safety": r'<td>Genossenschaftsanteile</td>\s+?<td>\s+?(.+?)\s+?</td>',
+            "rooms": r'<td>Zimmer</td>\s+?<td>\s+?(.+?)\s+?</td>',
+            "area": r'<td>Wohnfläche</td>\s+?<td>\s+?(.+?) m<sup>2</sup>\s+?</td>',
+            "floor": r'<td>\s+?(.+?)\. Etage\s+?</td>',
+            "location": r'<td>Straße</td>\s+?<td>\s+?(.+?)\s+?</td>',
+            "quarter": r'<td>Stadtteil</td>\s+?<td>\s+?(.+?)\s+?</td>',
+        },
+    },
+    {
         "name": "Bau- und Siedlungsgenossenschaft Postheimstätte eG",
         "url": "https://www.postheimstätte.de/properties/",
         "none-str": "Es tut uns leid, es wurden keine Objekte gefunden.",
