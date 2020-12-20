@@ -36,6 +36,11 @@ sites = [
         "none-str": "Derzeit können wir Ihnen leider keine Wohnungen zur Vermietung anbieten.",
     },
     {
+        "name": "Bewohnergenossenschaft FriedrichsHeim eG",
+        "url": "https://www.friedrichsheim-eg.de/category/freie-wohnungen/",
+        "none-str": "Zur Zeit sind leider keine Wohnungen im Angebot.",
+    },
+    {
         "name": "Gewobag",
         "url": (
             "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?nutzungsarten%5B%5D=wohnung"
