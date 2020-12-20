@@ -16,6 +16,11 @@ expose-details: a mapping from keys to regex strings, used to extract further de
 """
 sites = [
     {
+        "name": "Bau- und Siedlungsgenossenschaft Postheimstätte eG",
+        "url": "https://www.postheimstätte.de/properties/",
+        "none-str": "Es tut uns leid, es wurden keine Objekte gefunden.",
+    },
+    {
         "name": "Wohnungsbaugenossenschaft Zentrum eG",
         "url": "https://www.wbg-zentrum.de/wohnen/wohnungsangebot-2/wohnungsangebot/",
         "success-str": '<div class="wpb_text_column wpb_content_element ">',
