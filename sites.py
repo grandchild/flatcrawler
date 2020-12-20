@@ -26,6 +26,11 @@ sites = [
         "none-str": "Aktuell stehen leider keine Mietangebote zur Verfügung.",
     },
     {
+        "name": "Wohnungsbaugenossenschaft Bremer Höhe eG",
+        "url": "https://www.bremer-hoehe.de/Vermietung:_:90.html?sub=1",
+        "none-str": "Leider liegen zur Zeit keine Vermietungsangebote vor.",
+    },
+    {
         "name": "Gewobag",
         "url": (
             "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?nutzungsarten%5B%5D=wohnung"
