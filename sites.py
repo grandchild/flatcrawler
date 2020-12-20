@@ -16,6 +16,11 @@ expose-details: a mapping from keys to regex strings, used to extract further de
 """
 sites = [
     {
+        "name": "Wohnungsbaugenossenschaft Altglienicke eG",
+        "url": "https://www.wg-altglienicke.de/wohnungen",
+        "none-str": "Zur Zeit stehen keine Wohnungsangebote zur Verfügung.",
+    },
+    {
         "name": "Gewobag",
         "url": (
             "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?nutzungsarten%5B%5D=wohnung"
