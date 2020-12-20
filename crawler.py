@@ -44,6 +44,7 @@ EMAIL_SUBJECT = "[Wohnung] {} neue Wohnungsangebote"
 EMAIL_TEXT = "Hey,\n{}\n{}\n"
 EMAIL_SITE_OFFERS_TEXT = "\nes gibt neue Wohnungen bei {}:\n{}\n"
 EMAIL_SITE_ERRORS_TEXT = "\nEs sind Fehler aufgetreten bei {}:\n{}\n"
+EMAIL_SITE_NO_LIST_TEXT = "Es gibt Resultate, aber auflisten ist nicht möglich.\n{}"
 
 ERR_CONNECTION = (
     "Die Seite {} ( {} ) scheint nicht zu funktionieren. Konnte keine Angebote prüfen."
@@ -109,7 +110,11 @@ class Site:
                     self.offers.add(Offer(self.url, self.expose_details))
             elif self.success_str in result.text:
                 debug_dump_site_html(self.name, result.text)
-                matches = re.findall(self.expose_pattern, result.text)
+                if self.expose_pattern is not None:
+                    matches = re.findall(self.expose_pattern, result.text)
+                else:
+                    self.offers.add(Offer(EMAIL_SITE_NO_LIST_TEXT.format(self.url)))
+                    return
                 for match in matches:
                     match_url = urlunparse(
                         base_url_parts
