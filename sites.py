@@ -144,8 +144,8 @@ sites = [
         "name": "Gemeinnützige Baugenossenschaft Steglitz e.G.",
         "url": "https://www.gbst-berlin.de/Mietangebote/Freie-Wohnungen",
         "none-str": '<td class="cm_table cm_firstcol" style="text-align: left;"><p><br /></p></td>',
-        "success-str": 'href="https://public.od.cm4allbusiness.de/.cm4all/uro/W4BOD0AVBPF3/aktuelle%20Mietangebote%20PDF',
-        "expose-url-pattern": r'href="(https://public\.od\.cm4allbusiness\.de/\.cm4all/uro/W4BOD0AVBPF3/aktuelle%20Mietangebote%20PDF/.+?&amp;cdp=a)"',
+        "success-str": '<td class="cm_table cm_lastcol">',
+        "expose-url-pattern": r'https://public\.od\.cm4allbusiness\.de/\.cm4all/uro/W4BOD0AVBPF3/1_Mietangebote/Expos%C3%A9/.+?\.pdf.+?',
     },
     #     {
     #         "name": "Vaterländischer Bauverein",
