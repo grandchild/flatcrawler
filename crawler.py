@@ -46,6 +46,12 @@ CHECK_INTERVAL = 1 * hours
 URL_PRINT_LENGTH = 300  # print at maximimum n chars of the url in error messages
 KNOWN_FILE = "known.txt"
 
+### HTTP request settings
+HEADERS = {
+    # set a user agent to prevent "403: forbidden" errors on some sites
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0"
+}
+
 ### Message strings
 ## German
 EMAIL_SUBJECT = "[Wohnung] {} neue Wohnungsangebote"
@@ -105,7 +111,7 @@ class Site:
         print(LOG_CRAWLING.format(self.name))
         self.error = None
         try:
-            result = requests.get(self.url)
+            result = requests.get(self.url, headers=HEADERS)
             if not result.ok:
                 self.error = ERR_NOT_FOUND.format(
                     self.name, format_code(result.status_code), self.url
@@ -226,7 +232,7 @@ class OfferDetails:
         self.title = None
 
         try:
-            result = requests.get(self.url)
+            result = requests.get(self.url, headers=HEADERS)
             if not result.ok:
                 self.error = ERR_EXPOSE_NOT_FOUND.format(
                     "", format_code(result.status_code), self.url
