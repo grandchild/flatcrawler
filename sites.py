@@ -140,11 +140,11 @@ sites = [
     # <!-- indexer::stop -->
     # <p class="back"><a href="javascript:history.go(-1)" title="Zurück">Zurück</a></p>""",
     #     },
-    # {
-    #     "name": "Berolina",
-    #     "url": "https://berolina.info/wohnungssuche/",
-    #     "none-str": "Es tut uns leid, zur Zeit sind alle unsere Wohnungen vermietet und wir können Ihnen leider keine freien Wohnungen anbieten.",
-    # },
+     {
+         "name": "Berolina",
+         "url": "https://berolina.info/wohnungsangebote-wenn-angebote-vorhanden/",
+         "none-str": "Momentan sind leider keine Immobilien in unserem Angebot verfügbar.",
+     },
     # {
     #     "name": "ebay Kleinanzeigen",
     #     "url": f"https://www.ebay-kleinanzeigen.de/s-wohnung-mieten/berlin/anzeige:angebote/preis::{rent_max}/c203l3331+wohnung_mieten.etage_i:{floor_min},{floor_max}+wohnung_mieten.qm_d:{area_min},+wohnung_mieten.zimmer_d:{rooms_min},{rooms_max}",
