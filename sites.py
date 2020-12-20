@@ -16,6 +16,12 @@ expose-details: a mapping from keys to regex strings, used to extract further de
 """
 sites = [
     {
+        "name": "Wohnungsbaugenossenschaft Zentrum eG",
+        "url": "https://www.wbg-zentrum.de/wohnen/wohnungsangebot-2/wohnungsangebot/",
+        "success-str": '<div class="wpb_text_column wpb_content_element ">',
+        "expose-url-pattern": r'href="(https://www\.wbg-zentrum\.de/wp\-content/uploads/.+?/.+?/.+?\.pdf)" title="" target="_blank">weiter</a>',
+    },
+    {
         "name": "Wohnungsbaugenossenschaft Altglienicke eG",
         "url": "https://www.wg-altglienicke.de/wohnungen",
         "none-str": "Zur Zeit stehen keine Wohnungsangebote zur Verfügung.",
