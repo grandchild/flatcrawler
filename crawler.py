@@ -3,14 +3,22 @@
 # To the extent possible under law, all copyright and related or neighboring
 # rights to this work are waived.
 """
-Watch a webserver continously to check if it and all pages it is supposed to
-serve are online. Send an email and exit when something fails.
+flatcrawler -- Crawl flat offer websites for new flats.
 
-This script exits after an error so that the recipients won't be spammed, but
-this means it requires a manual restart once things are back to normal.
+If run periodically, this script will notify you of new offers quickly as they appear
+online.
 
-See the bottom of this file for a fitting systemd service file, to be placed
-at /etc/systemd/system/notifywebsitedown.service.
+For each site configured in sites.py, retrieve the website HTML and scan it for the
+presence of certain strings and links. Create `Offer` objects for each expose link
+found. Will optionally retrieve the offer links as well scan them for additional details
+on the offer.
+
+Previously seen offers will not be considered and to that end all offer links will be
+saved to a `known.txt` file.
+
+If there are any new offers, format the collected offer list as a plaintext email with
+links. When run with the flag `--no-email`, skip email sending and print the text on
+stdout. Use this flag to send via other means, such as messenger bots.
 """
 import re
 import os
