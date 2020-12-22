@@ -58,3 +58,30 @@ Check that the timer is running with:
 ```bash
 systemctl --user status flatcrawler.timer
 ```
+
+## Contributing
+
+Please follow these guidelines when contributing code to the project:
+
+Use [**black**](https://black.readthedocs.io/en/stable/) to format all Python source
+code! (All _black_ options on default values.)
+
+Commit messages should follow a few rules:
+* Keep the summary line to 50 characters or less.
+* Use _active_ and _present_ tense.
+* In the commit message text write mainly _why_ you you did the change, not only _what_
+  changed.
+* Keep the commit message text to 70 characters or less.
+
+Read the license note below about CC0 and attribution. Understand that attribution is
+usually given gladly and where due, but is strictly optional. This includes everyone.
+
+Thank you!
+
+## License
+
+This software has a [CC0](https://creativecommons.org/publicdomain/zero/1.0/) license.
+
+You may use this code without attribution, that is without mentioning where it's from or
+who wrote it. I would actually prefer if you didn't mention me. You may even claim it's
+your own.
