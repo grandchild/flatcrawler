@@ -172,7 +172,7 @@ class Site:
             known_file_path = Path(KNOWN_FILE)
             known_file_path.touch()
             with known_file_path.open("r+") as known_file:
-                if any([True for known in known_file if url in known]):
+                if any(True for known in known_file if url in known):
                     return include_known
                 else:
                     print(url, file=known_file)
