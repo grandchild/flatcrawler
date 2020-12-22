@@ -24,12 +24,9 @@ crawler.py --no-email --include-known
 ```
 to skip email sending and print all items that would be sent in a new run.
 
-## Python
-
-Uses f-strings 🤩 and thus needs python 3.6 or higher.
-
 ## Dependencies
 
+* Python >= 3.6
 * [requests](http://docs.python-requests.org/en/master/user/install/#install)
 * [beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup)
 
