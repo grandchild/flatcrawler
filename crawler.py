@@ -404,10 +404,10 @@ if __name__ == "__main__":
         default=None,
         help=(
             "Print a systemd unit file of the specified type."
-            + " Use 'service@' to print a service file that allows a User parameter."
-            + " Use 'install' to create the service and timer in"
-            + " ~/.local/share/systemd/user/. Use 'run' to install, start and enable"
-            + " the timer, all in one command."
+            " Use 'service@' to print a service file that allows a User parameter."
+            " Use 'install' to create the service and timer in"
+            " ~/.local/share/systemd/user/. Use 'run' to install, start and enable"
+            " the timer, all in one command."
         ),
     )
     parser.add_argument(
