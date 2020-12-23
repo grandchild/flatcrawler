@@ -91,7 +91,7 @@ sites = [
             "floor": r'<div class="detail-label">Etage</div>\s+<div class="detail-value">(.+?)</div>',
             "rooms": r'<div class="detail-label">Anzahl Zimmer</div>\s+<div class="detail-value">(.+?)</div>',
             "area": r'<div class="detail-label">Fl&auml;che in m²</div>\s+<div class="detail-value">(.+?)</div>',
-            "vacantby": r'<div class="detail-label">Frei ab</div>\s+\s+<div class="detail-value capitalize">(.+?)</div>',
+            "vacant_by": r'<div class="detail-label">Frei ab</div>\s+\s+<div class="detail-value capitalize">(.+?)</div>',
         },
     },
     {
