@@ -22,14 +22,14 @@ sites = [
         "expose-url-pattern": r'<a href="https://www\.dpfonline\.de/(immobilien/.+?)/">',
         "expose-details": {
             "title": r'<h1 class="immo-caption">\s+?(.+?)\s+?</h1>',
-            "price": r'<td>Kaltmiete</td>\s+?<td>\s+?(.+?)\s+?</td>',
-            "total_rent": r'<td>Gesamtmiete</td>\s+?<td>\s+?(.+?)\s+?</td>',
-            "safety": r'<td>Genossenschaftsanteile</td>\s+?<td>\s+?(.+?)\s+?</td>',
-            "rooms": r'<td>Zimmer</td>\s+?<td>\s+?(.+?)\s+?</td>',
-            "area": r'<td>Wohnfläche</td>\s+?<td>\s+?(.+?) m<sup>2</sup>\s+?</td>',
-            "floor": r'<td>\s+?(.+?)\. Etage\s+?</td>',
-            "location": r'<td>Straße</td>\s+?<td>\s+?(.+?)\s+?</td>',
-            "quarter": r'<td>Stadtteil</td>\s+?<td>\s+?(.+?)\s+?</td>',
+            "price": r"<td>Kaltmiete</td>\s+?<td>\s+?(.+?)\s+?</td>",
+            "total_rent": r"<td>Gesamtmiete</td>\s+?<td>\s+?(.+?)\s+?</td>",
+            "safety": r"<td>Genossenschaftsanteile</td>\s+?<td>\s+?(.+?)\s+?</td>",
+            "rooms": r"<td>Zimmer</td>\s+?<td>\s+?(.+?)\s+?</td>",
+            "area": r"<td>Wohnfläche</td>\s+?<td>\s+?(.+?) m<sup>2</sup>\s+?</td>",
+            "floor": r"<td>\s+?(.+?)\. Etage\s+?</td>",
+            "location": r"<td>Straße</td>\s+?<td>\s+?(.+?)\s+?</td>",
+            "quarter": r"<td>Stadtteil</td>\s+?<td>\s+?(.+?)\s+?</td>",
         },
     },
     {
@@ -145,7 +145,7 @@ sites = [
         "url": "https://www.gbst-berlin.de/Mietangebote/Freie-Wohnungen",
         "none-str": '<td class="cm_table cm_firstcol" style="text-align: left;"><p><br /></p></td>',
         "success-str": '<td class="cm_table cm_lastcol">',
-        "expose-url-pattern": r'https://public\.od\.cm4allbusiness\.de/\.cm4all/uro/W4BOD0AVBPF3/1_Mietangebote/Expos%C3%A9/.+?\.pdf.+?',
+        "expose-url-pattern": r"https://public\.od\.cm4allbusiness\.de/\.cm4all/uro/W4BOD0AVBPF3/1_Mietangebote/Expos%C3%A9/.+?\.pdf.+?",
     },
     #     {
     #         "name": "Vaterländischer Bauverein",
@@ -157,11 +157,11 @@ sites = [
     # <!-- indexer::stop -->
     # <p class="back"><a href="javascript:history.go(-1)" title="Zurück">Zurück</a></p>""",
     #     },
-     {
-         "name": "Berolina",
-         "url": "https://berolina.info/wohnungsangebote-wenn-angebote-vorhanden/",
-         "none-str": "Momentan sind leider keine Immobilien in unserem Angebot verfügbar.",
-     },
+    {
+        "name": "Berolina",
+        "url": "https://berolina.info/wohnungsangebote-wenn-angebote-vorhanden/",
+        "none-str": "Momentan sind leider keine Immobilien in unserem Angebot verfügbar.",
+    },
     # {
     #     "name": "ebay Kleinanzeigen",
     #     "url": f"https://www.ebay-kleinanzeigen.de/s-wohnung-mieten/berlin/anzeige:angebote/preis::{rent_max}/c203l3331+wohnung_mieten.etage_i:{floor_min},{floor_max}+wohnung_mieten.qm_d:{area_min},+wohnung_mieten.zimmer_d:{rooms_min},{rooms_max}",
