@@ -63,12 +63,18 @@ Please follow these guidelines when contributing code to the project:
 Use [**black**](https://black.readthedocs.io/en/stable/) to format all Python source
 code! (All _black_ options on default values.)
 
-Commit messages should follow a few rules:
-* Keep the summary line to 50 characters or less.
-* Use _active_ and _present_ tense.
-* In the commit message text write mainly _why_ you you did the change, not only _what_
-  changed.
-* Keep the commit message text to 70 characters or less.
+Commit messages should look like this:
+
+```shell
+Add brief summary line of 50 characters or less
+  ## empty line ##
+In the message body write mainly _why_ you you did the change, not
+just _what_ changed. Keep the message body text line-length to 70
+characters or less.
+
+Use _active_ and _present_ tense. Ideally, the summary and message
+should describe what the commit changes when applied.
+```
 
 Read the license note below about CC0 and attribution. Understand that attribution is
 usually given gladly and where due, but is strictly optional. This includes everyone.
