@@ -80,6 +80,9 @@ LOG_NO_NEW_RESULTS = ":: no new results ::"
 LOG_WARN = 'WARNING: "{}" - {} ({} Neuversuche verbleiben)'
 LOG_ERR = 'ERROR: "{}" - {}'
 
+VERBOSITY = 0
+QUIET = False
+
 
 class Site:
     """
@@ -108,7 +111,7 @@ class Site:
         """
         base_url_parts = urlsplit(self.url)[:2]
 
-        print(LOG_CRAWLING.format(self.name))
+        v(LOG_CRAWLING.format(self.name))
         self.error = None
         try:
             result = requests.get(self.url, headers=HEADERS)
@@ -142,7 +145,7 @@ class Site:
                 if not matches:
                     self.error = ERR_SUCCESS_NO_MATCHES.format(self.name)
             elif self.none_str and (self.none_str in result.text):
-                print(LOG_NO_FLATS.format(self.name))
+                v(LOG_NO_FLATS.format(self.name))
             else:
                 self.error = ERR_CONNECTION.format(
                     self.name, truncate(self.url, URL_PRINT_LENGTH)
@@ -153,11 +156,11 @@ class Site:
             )
         if self.error:
             if retries > 0:
-                print(LOG_WARN.format(self.name, self.error, retries))
+                err(LOG_WARN.format(self.name, self.error, retries))
                 time.sleep(backoff)
                 return self.check(retries - 1, (backoff + 2) * 1.5)
             else:
-                print(LOG_ERR.format(self.name, self.error))
+                err(LOG_ERR.format(self.name, self.error))
 
     def check_and_update_known(self, url, text=None, include_known=False):
         """Keep track of individual flat urls that we've already seen."""
@@ -271,20 +274,16 @@ def main(options):
         if any(site.offers) or site.error is not None:
             results.append(site)
     if results:
-        print(LOG_NEW_RESULTS)
+        v(LOG_NEW_RESULTS)
         mail_subject, mail_text = format_mail(results)
-        if not options.no_email:
-            print(LOG_EMAIL_SENT)
-            send_mail(mail_subject, mail_text)
+        if options.no_email:
+            print(f"{mail_subject}\n\n{mail_text}")
         else:
-            print()
-            print(mail_subject)
-            print()
-            print(mail_text)
-        if options.debug:
-            print(results)
+            send_mail(mail_subject, mail_text)
+            v(LOG_EMAIL_SENT)
+        vv(results)
     else:
-        print(LOG_NO_NEW_RESULTS)
+        v(LOG_NO_NEW_RESULTS)
     return 0 if all([r.error is None for r in results]) else 1
 
 
@@ -334,6 +333,21 @@ def truncate(string, max_len):
 def debug_dump_site_html(name, html):
     with open(f"debug-sites/site-{name}.html", "w") as test_log:
         print(html, file=test_log)
+
+
+def v(*msg):
+    if VERBOSITY > 0 and not QUIET:
+        print(*msg)
+
+
+def vv(*msg):
+    if VERBOSITY > 1 and not QUIET:
+        print(*msg)
+
+
+def err(*msg):
+    if not QUIET:
+        print(*msg, file=sys.stderr)
 
 
 def service_file(user_param=False):
@@ -411,13 +425,25 @@ if __name__ == "__main__":
         ),
     )
     parser.add_argument(
-        "--no-email", action="store_true", help="Don't send an email, only log results"
+        "--no-email",
+        action="store_true",
+        help="Don't send email, print email text to stdout",
     )
-    parser.add_argument("--debug", action="store_true", help="Dump raw results")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        help="Increase verbosity (1 shows progress, 2 dumps raw results at the end)",
+    )
+    parser.add_argument(
+        "-q", "--quiet", action="store_true", help="Print no messages, not even errors"
+    )
     parser.add_argument(
         "--include-known", action="store_true", help="Include known results"
     )
     args = parser.parse_args()
+    VERBOSITY = args.verbose or 0
+    QUIET = args.quiet or False
     if args.systemd == "service":
         print(service_file())
     elif args.systemd == "service@":
