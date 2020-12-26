@@ -331,8 +331,11 @@ def truncate(string, max_len):
 
 
 def debug_dump_site_html(name, html):
-    with open(f"debug-sites/site-{name}.html", "w") as test_log:
-        print(html, file=test_log)
+    dump_sites_path = Path("debug-sites")
+    dump_sites_path.mkdir(parents=True, exist_ok=True)
+    site_debug_path = dump_sites_path / f"sites-{name}.html"
+    with site_debug_path.open("w") as site_dump:
+        print(html, file=site_dump)
 
 
 def v(*msg):
