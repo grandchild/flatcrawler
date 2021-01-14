@@ -133,11 +133,9 @@ class Site:
                     self.offers.add(Offer(EMAIL_SITE_NO_LIST_TEXT.format(self.url)))
                     return
                 for match in matches:
-                    match_url = urlunparse(
-                        base_url_parts
-                        + (match if isinstance(match, str) else match.group(1),)
-                        + ("",) * 3
-                    )
+                    match_url = match if isinstance(match, str) else match.group(1)
+                    if not urlparse(match_url).scheme:
+                        match_url = urlunparse(base_url_parts + (match_url, "", "", ""))
                     if self.check_and_update_known(
                         match_url, include_known=include_known
                     ):
