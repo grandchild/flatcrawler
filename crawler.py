@@ -25,7 +25,7 @@ import os
 import sys
 import time
 from collections import defaultdict
-from urllib.parse import urlsplit, urlunparse
+from urllib.parse import urlparse, urlsplit, urlunparse
 from hashlib import sha1
 from pathlib import Path
 from argparse import ArgumentParser
