@@ -98,7 +98,7 @@ class Site:
         self.url = self.config["url"]
         self.none_str = self.config["none-str"]
         self.success_str = self.config["success-str"]
-        self.expose_pattern = self.config["expose-url-pattern"]
+        self.expose_url_pattern = self.config["expose-url-pattern"]
         self.expose_details = self.config["expose-details"]
 
     def check(self, retries=2, backoff=1, include_known=False):
@@ -127,8 +127,8 @@ class Site:
                     self.offers.add(Offer(self.url, self.expose_details))
             elif self.success_str in result.text:
                 debug_dump_site_html(self.name, result.text)
-                if self.expose_pattern is not None:
-                    matches = re.findall(self.expose_pattern, result.text)
+                if self.expose_url_pattern is not None:
+                    matches = re.findall(self.expose_url_pattern, result.text)
                 else:
                     self.offers.add(Offer(EMAIL_SITE_NO_LIST_TEXT.format(self.url)))
                     return
