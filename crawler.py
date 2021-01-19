@@ -90,7 +90,7 @@ class Site:
     most of the fields specified in `sites.py`.
     """
 
-    def __init__(self, config={}):
+    def __init__(self, config):
         self.config = defaultdict(lambda: None, config)
         self.offers = set()
         self.error = None
